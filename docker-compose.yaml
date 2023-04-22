@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  auth_db:
+    container_name: auth_db
+    image: 'postgres:15.1'
+    restart: always
+    volumes:
+      - './auth_data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '5433:5432'
+  aprender_db:
+    container_name: aprender_db
+    image: aprender.postgres:15.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - './aprender_data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      LC_COLLATE: 'es_MX.UTF-8'
+      LC_CTYPE: 'es_MX.UTF-8'
+    ports:
+      - '5434:5432'
+  lms_db:
+    container_name: lms_db
+    image: moodle.postgres:15.1
+    build:
+      context: .
+      dockerfile: Dockerfile-DB
+    restart: always
+    volumes:
+      - './lms_data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      LC_COLLATE: 'es_MX.UTF-8'
+      LC_CTYPE: 'es_MX.UTF-8'
+    ports:
+      - '5435:5432'
+volumes:
+  aprender_data:
+  auth_data:
+  lms_data:
